@@ -1,0 +1,661 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Redux Tutorial</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<!-- Cover -->
+				<section>
+					<img height="200px" src="./img/redux-logo-landscape.png" />
+					<h2>Redux Tutorial</h2>
+					<p>Sean Chang</p>
+					<p>NTAD</p>
+					<img src="https://www.tsmc.com/themes/custom/bootstrap_sass/images/logo.png"/>
+				</section>
+				<!-- Slide 1 -->
+				<section>
+					<section>
+						<h3>Why we need Redux?</h3>
+					</section>
+					<section>
+						<h3>State management sucks!</h3>
+						<img src="https://cdn.codecentric.de/20210310100334/Bildschirmfoto-2017-12-01-um-08.53.32.png" />
+					</section>
+					<section>
+						<h3>Lifting state up</h3>
+						<img src="./img/redux-tutorial-lift-state-up.drawio.png" />
+						<footer>https://reactjs.org/docs/lifting-state-up.html</footer>
+					</section>
+					<section>
+						<h3>States are trackable!</h3>
+						<img src="./img/redux-devtools.png" />
+					</section>
+					<section>
+						<h3>Side effects</h3>
+						<pre><code data-line-numbers class="language-jsx" data-trim><script type="text/template">
+							const Comp = (props) => {
+								const [content, setContent] = useState();
+
+								useEffect(() => {
+									callApi().then((res) => setContent(res.data));
+								});
+
+								return (
+									<div>{content}</div>
+								);
+							};
+						</script>
+						</code></pre>
+					</section>
+				</section>
+				<!-- Slide 2 -->
+				<section>
+					<section>
+						<h3>Container Component Pattern</h3>
+					</section>
+					<section>
+						<ul>
+							<li>Container: cope with data manipulation & logics</li>
+							<li>Component: focus on UI styles.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Start from a simple App</h3>
+						<img src="./img/simple-app.png" />
+					</section>
+					<section>
+						<h3>Container</h3>
+						<pre><code data-line-numbers class="language-jsx" data-trim><script type="text/template">
+							const Dashboard = (props) => {
+								const [count, setCount] = useState(0);
+
+								const onClick = () => {
+									setCount(count + 1);
+								};
+
+								return (
+									<>
+										<BeautifulChart count={count} />
+										<BeautifulButton onClick={onClick} />
+									</>
+								);
+							};
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Component</h3>
+						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">
+							const BeautifulChart = ({ count }) => {
+								return <>{ count }</>;
+							}
+
+							const BeautifulButton = ({ onClick }) => {
+								return <button onClick={onClick}>Click</button>;
+							}
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Advantages</h3>
+						<ul>
+							<li class="fragment">Splitting UI & logics code (maintainability)</li>
+							<li class="fragment">Lifting states up</li>
+							<li class="fragment">Make UI components more reusable</li>
+						</ul>
+					</section>
+					<section>
+						<h3>But!</h3>
+						<h3 class="fragment">State management still sucks!</h3>
+					</section>
+				</section>
+				<!-- Slide 3 -->
+				<section>
+					<section>
+						<h3>Redux to the rescue!</h3>
+					</section>
+					<section>
+						<h3>Terminology</h3>
+						<ul>
+							<li class="fragment">Store: store states, dispatch actions</li>
+							<li class="fragment">Reducer: (State, Action) -> State'</li>
+							<li class="fragment">Action: javascript object contains <em><b>type</b></em> key.</li>
+							<li class="fragment">Dispatch: only way to change states</li>
+							<li class="fragment">Selector: (State) -> Data</li>
+						</ul>
+					</section>
+					<section>
+						<h3>One-way data flow</h3>
+						<img height="500px" src="https://d33wubrfki0l68.cloudfront.net/01cc198232551a7e180f4e9e327b5ab22d9d14e7/b33f4/assets/images/reduxdataflowdiagram-49fa8c3968371d9ef6f2a1486bd40a26.gif" />
+					</section>
+				</section>
+				<!-- Slide 4 -->
+				<section>
+					<section>
+						<h3>Hands-on Redux</h3>
+					</section>
+					<section>
+						<h3>Installation</h3>
+						<pre><code data-trim class="language-bash"><script type="text/template">
+							npm install redux react-redux @reduxjs/toolkit
+						</script></code></pre>
+					</section>
+					<section>
+						<p>./src/store.js</p>
+						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">
+							import { configureStore } from "@reduxjs/toolkit";
+
+							import rootReducer from "./reducer";
+							
+							const store = configureStore({
+							  reducer: {
+								root: rootReducer,
+							  },
+							});
+							
+							export default store;							
+						</script></code></pre>
+					</section>
+					<section>
+						<p>./src/index.js</p>
+						<pre><code data-line-numbers="4-5,9-11" data-trim class="language-jsx"><script type="text/template">						
+							import React from "react";
+							import ReactDOM from "react-dom";
+							import App from "./App";
+							import { Provider } from "react-redux";
+							import store from "./store";
+							
+							ReactDOM.render(
+								<React.StrictMode>
+									<Provider store={store}>
+										<App />
+									</Provider>
+								</React.StrictMode>,
+							  document.getElementById("root")
+							);
+						</script></code></pre>
+					</section>
+					<section>
+						<p>./src/reducer.js</p>
+						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">						
+							import { createSlice } from "@reduxjs/toolkit";
+
+							const initialState = {
+							  count: 0,
+							};
+							
+							const rootSlice = createSlice({
+							  name: "root",
+							  initialState,
+							  reducers: {
+								setCount: (state, action) => {
+								  state.count = action.payload;
+								},
+							  },
+							});
+							
+							export const { setCount } = rootSlice.actions;
+							
+							export default rootSlice.reducer;							
+						</script></code></pre>
+					</section>
+					<section>
+						<p>./src/selector.js</p>
+						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">						
+							export const countSelector = (state) => state.root.count;					
+						</script></code></pre>
+					</section>
+					<section>
+						<p>./src/container/Dashboard.js</p>
+						<pre><code data-line-numbers="2|4-5|11-15" data-trim class="language-jsx"><script type="text/template">						
+							import React from "react";
+							import { useDispatch, useSelector } from "react-redux";
+							
+							import { setCount } from "../reducer";
+							import { countSelector } from "../selector";
+							
+							import BeautifulChart from "../components/BeautifulChart";
+							import BeautifulButton from "../components/BeautifulButton";
+							
+							const Dashboard = (props) => {
+							  const dispatch = useDispatch();
+							  const count = useSelector(countSelector);
+							  const onClick = () => {
+									dispatch(setCount(count + 1));
+							  };
+							
+							  return (
+								<>
+								  <BeautifulChart count={count} />
+								  <BeautifulButton onClick={onClick} />
+								</>
+							  );
+							};
+							
+							export default Dashboard;						
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Simple App + Redux</h3>
+						<img src="./img/simple-app-redux.png" />
+					</section>
+					<section>
+						<h3>The Problems been solved</h3>
+						<ul>
+							<li class="fragment">✅ No longer to lift state up</li>
+							<li class="fragment">✅ Finally, We have a state management mechanism</li>
+							<li class="fragment">✅ States are trackable</li>
+							<li class="fragment">❌ Eliminate side effect (UI -> Store)</li>
+						</ul>
+					</section>
+				</section>
+				<!-- Slide 5 -->
+				<section>
+					<section>
+						<h3>Redux Style Guide</h3>
+						<a target="_blank" href="https://redux.js.org/style-guide/style-guide#priority-a-rules-essential">
+							https://redux.js.org/style-guide/style-guide#priority-a-rules-essential
+						</a>
+					</section>
+					<section>
+						<h3>Priority A: Essential</h3>
+						<ul>
+							<li class="fragment">Do Not Mutate State (<a href="#/4/4">link</a>)</li>
+							<li class="fragment">Reducers Must Not Have Side Effects</li>
+							<li class="fragment">Do Not Put Non-Serializable Values in State or Actions</li>
+							<li class="fragment">Only One Redux Store Per App</li>
+						</ul>
+					</section>
+					<section>
+						<p>So... How can we eliminate the side effects in Redux?</p>
+						<p class="fragment">Yes! Redux Middleware can do this!.</p>
+					</section>
+					<section>
+						<h3>One-way Data Flow with Middleware</h3>
+						<img height="500px" src="https://redux.js.org/assets/images/ReduxAsyncDataFlowDiagram-d97ff38a0f4da0f327163170ccc13e80.gif" />
+					</section>
+				</section>
+				<!-- Slide 6 -->
+				<section>
+					<section>
+						<h3>Middleware to the rescue!</h3>
+					</section>
+					<section>
+						<h3>What is a middleware?</h3>
+						<p class="fragment">Let's start from a simple log function...</p>
+					</section>
+					<section>
+						<h3>Version 1</h3>
+						<p>Log before & after dispatching an action</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							let action = addContent("I'm handsome!");
+
+							console.log(action);
+							store.dispatch(action);
+							console.log(store.getState());
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Version 2</h3>
+						<p>DRY: don't repeat yourself</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							const dispatchAndLog = (store, action) => {
+								console.log(action);
+								store.dispatch(action);
+								console.log(store.getState());	
+							};
+
+							let action = addContent("I'm handsome!");
+
+							dispatchAndLog(store, action);
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Version 3</h3>
+						<p>Monkeypatch: I'm too lazy to import this function every time!</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							let next = store.dispatch;
+							const dispatchAndLog = (action) => {
+								console.log(action);
+								const result = next(action);
+								console.log(store.getState());
+								return result;
+							}
+							store.dispatch = dispatchAndLog;
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Version 4</h3>
+						<p>We can have many patches</p>
+						<pre><code data-line-numbers="3-8,14-21" data-trim class="language-javascript"><script type="text/template">
+							const patchStoreToAddLog = (store) => {
+								let next = store.dispatch;
+								const dispatchAndLog = (action) => {
+									console.log(action);
+									const result = next(action);
+									console.log(store.getState());
+									return result;
+								}
+								store.dispatch = dispatchAndLog;
+							};
+
+							const patchStoreToAddErrorHandling = (store) => {
+								let next = store.dispatch;
+								const dispatchAndErrorHandling = (action) => {
+									try {
+										return next(action);
+									} catch (e) {
+										console.log(e);
+										throw e;
+									}
+								};
+								store.dispatch = dispatchAndErrorHandling;
+							};
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Version 5</h3>
+						<p>Hide mokeypatch</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							const logger = (store) => {
+								let next = store.dispatch;
+
+								return (action) => {
+									console.log(action);
+									let result = next(action);
+									console.log(store.getState());
+									return result;
+								};
+							};
+
+							const errorHandling = (store) => {
+								let next = store.dispatch;
+
+								return (action) => {
+									try {
+										return next(action);
+									} catch (e) {
+										console.log(e);
+										throw e;
+									}
+								};
+							};
+
+							const applyMiddlewareByMonkeypatches = (store, middlewares) => {
+								middlewares.forEach((middleware) => {
+									store.dispatch = middleware(action);
+								});
+							};
+
+							applyMiddlewareByMonkeypatches(store, [logger, errorHandling]);
+						</script></code></pre>
+					</section>
+					<section>
+						<h2>We need to go deeper!</h2>
+						<img src="https://i.kym-cdn.com/entries/icons/mobile/000/012/886/wntgd.jpg" />
+					</section>
+					<section>
+						<h3>Version 6</h3>
+						<p>Remove monkeypatch: pass the <b>next</b> for me plz!</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							const logger = (store) => {
+								return (next) => {
+									return (action) => {
+										console.log(action);
+										const result = next(action);
+										console.log(store.getState());
+										return result;
+									};
+								};
+							};
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Version 7</h3>
+						<p>Currying!</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							const logger = store => next => action => {
+								console.log(action);
+								const result = next(action);
+								console.log(store.getState());
+								return result;
+							};
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Congrats!</h3>
+						<p>You are able to write a redux middleware!</p>
+					</section>
+					<section>
+						<h3>Apply middlewares to redux store</h3>
+						<p>./src/store.js</p>
+						<pre><code data-line-numbers="1-2,10" data-trim class="language-javascript"><script type="text/template">
+							import { configureStore, applyMiddleware } from "@reduxjs/toolkit";
+							import { logger, errorHandling } from './middlewares';
+
+							import rootReducer from "./reducer";
+							
+							const store = configureStore({
+							  reducer: {
+								root: rootReducer,
+							  },
+							  middleware: [logger, errorHandling],
+							});
+							
+							export default store;
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Data Flow become more complicated!</h3>
+						<div class="mermaid">
+							%%{init: {'themeVariables': {'fontSize': '30px'}}}%%
+							graph LR;
+								A[store.dispatch] --> B[logger]
+								B -->|next| C[errorHandling]
+								C -->|next| D[Reducers]
+						</div>
+					</section>
+				</section>
+				<!-- Slide 7 -->
+				<section>
+					<section>
+						<div style="display: flex; flex-direction:row; align-items: flex-end; justify-content: space-around;">
+							<div>
+								<img width="300px" src="https://redux-saga.js.org/img/Redux-Saga-Logo.png" />
+								<p>Redux-Saga</p>
+							</div>
+							<div>
+								<img width="300px" src="https://d33wubrfki0l68.cloudfront.net/0834d0215db51e91525a25acf97433051f280f2f/c30f5/img/redux.svg" />
+								<p>Redux-Thunk</p>
+							</div>
+						</div>
+					</section>
+					<section>
+						<div>
+							<img width="300px" src="https://d33wubrfki0l68.cloudfront.net/0834d0215db51e91525a25acf97433051f280f2f/c30f5/img/redux.svg" />
+							<p>Redux-Thunk</p>
+						</div>
+					</section>
+					<section>
+						<h3>What is a thunk?</h3>
+						<p class="fragment">
+							"thunks" are a pattern of writing functions with logic inside that can interact with a Redux store's dispatch and getState methods.
+						</p>
+					</section>
+					<section>
+						<h3>Thunk function</h3>
+						<p>Can be synchronize or asynchronize function</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							const thunk = (dispatch, getState) => {
+								// logic goes there
+							};
+
+							store.dispatch(thunk);
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Rewrite action creator</h3>
+						<p>How do we call the API?</p>
+						<pre><code data-line-numbers="2-9" data-trim class="language-javascript"><script type="text/template">
+							const getProduct = (productId) => {
+								return async (dispatch, getState) => {
+									const response = await callProductAPI('/products/${productId}');
+									if (response.status === 200) {
+										dispatch(getProductSuccess(response.data));
+									} else {
+										dispatch(getProductFailed(response.reason));
+									};
+								};
+							};
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>How Does the Middleware Work?</h3>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							const thunkMiddleware =
+								({ dispatch, getState }) =>
+								next =>
+								action => {
+									// If the "action" is actually a function instead...
+									if (typeof action === 'function') {
+										// then call the function and pass `dispatch` and `getState` as arguments
+										return action(dispatch, getState)
+									};
+
+									// Otherwise, it's a normal action - send it onwards
+									return next(action);
+							};
+						</script></code></pre>	
+					</section>
+					<section>
+						<h3>Thunk Flow</h3>
+						<div class="mermaid">
+							%%{init: {'themeVariables': {'fontSize': '30px'}}}%%
+							graph LR;
+								A[Action] --> B1
+								A --> B2
+								subgraph Thunk Middleware
+									B1[function] --> C[Middleware]
+									B2[action] --> C
+								end
+								C -->|next| D[Other Middleware]
+								D -->|next| E[Reducers]
+						</div>
+					</section>
+					<section>
+						<div>
+							<img width="300px" src="https://redux-saga.js.org/img/Redux-Saga-Logo.png" />
+							<p>Redux-Saga</p>
+						</div>
+					</section>
+					<section>
+						<p>./src/saga.js</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							import { call, put, takeEvery } from 'redux-saga/effects';
+							import Api from '...';
+
+							function* fetchUser(action) {
+								const { userId } = action.payload;
+								try {
+									const user = yield call(Api.fetchUser, userId);
+									yield put(
+										{
+											type: "USER_FETCH_SUCCEEDED", 
+											user: user
+										}
+									);
+								} catch (e) {
+									yield put(
+										{
+											type: "USER_FETCH_FAILED", 
+											message: e.message
+										}
+									);
+								};
+							};
+
+							function* mySaga() {
+								yield takeEvery("USER_FETCH_REQUESTED", fetchUser);
+							}
+
+							export default mySaga;
+						</script></code></pre>	
+					</section>
+					<section>
+						<p>./src/store.js</p>
+						<pre><code data-line-numbers="2-3,5,9-10,14" data-trim class="language-javascript"><script type="text/template">
+							import { configureStore } from "@reduxjs/toolkit";
+							import createSagaMiddleware from "@redux-saga/core";
+							import saga from './saga';
+							
+							const sagaMiddleware = createSagaMiddleware();
+	
+							const store = configureStore({
+								reducer: { ... },
+								middleware: (getDefaultMiddleware) => {
+									getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
+								}
+							});
+	
+							sagaMiddleware.run(saga);
+	
+							export default store;
+						</script></code></pre>	
+					</section>
+					<section>
+						<h3>Dispatch an action!</h3>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							...
+							
+							const Comp => (props) => {
+								const dispatch = useDispatch();
+
+								return (
+									<>
+										<button onClick={() => dispatch({ type: "USER_FETCH_REQUESTED", userId: 123 })}>Dispatch action!</button>
+									</>;
+								)
+							}
+
+							...
+						</script></code></pre>	
+					</section>
+				</section>
+				<section>
+					<h3>References</h3>
+					<ul>
+						<li><a href="https://redux.js.org/tutorials/fundamentals/part-2-concepts-data-flow">Redux: One-way Data Flow</a></li>
+						<li><a href="https://redux.js.org/understanding/history-and-design/middleware">Redux: Middleware</a></li>
+						<li><a href="https://redux.js.org/style-guide/style-guide">Redux: Style Guide</a></li>
+						<li><a href="https://redux.js.org/usage/writing-logic-thunks">Redux-Thunk: Writing Logic with Thunks</a></li>
+					</ul>
+				</section>
+			</div>
+		</div>
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.14.0/mermaid.min.js" integrity="sha512-vLumCjg7NKEQKGM+xAgBYTvQ90DVu6Eo7vS1T/iPf2feNLcrpGxvumuUUmE3CPiCUPgviyKbtpWGDbhnVnmJxg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script>mermaid.initialize({startOnLoad:true});</script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
