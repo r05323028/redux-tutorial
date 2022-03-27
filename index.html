@@ -38,16 +38,23 @@
 						<footer>https://reactjs.org/docs/lifting-state-up.html</footer>
 					</section>
 					<section>
+						<h3>props, props and props...</h3>
+						<img src="./img/redux-tutorial-lift-sucks.png" />
+					</section>
+					<section>
 						<h3>States are trackable!</h3>
+						<p>Redux time travel</p>
 						<img src="./img/redux-devtools.png" />
 					</section>
 					<section>
 						<h3>Side effects</h3>
 						<pre><code data-line-numbers class="language-jsx" data-trim><script type="text/template">
+							import { useMount } from 'react-use';
+
 							const Comp = (props) => {
 								const [content, setContent] = useState();
 
-								useEffect(() => {
+								useMount(() => {
 									callApi().then((res) => setContent(res.data));
 								});
 
@@ -62,7 +69,30 @@
 				<!-- Slide 2 -->
 				<section>
 					<section>
-						<h3>Container Component Pattern</h3>
+						<h3>Container/Presentational Pattern</h3>
+					</section>
+					<section>
+						<h3>React Rookie</h3>
+						<pre><code data-line-numbers class="language-jsx" data-trim><script type="text/template">
+							import React from "react";
+
+							const Dashboard = (props) => {
+								const [count, setCount] = useState(0);
+
+								const handleOnClick = () => setCount(count + 1);
+
+								return (
+									<>
+										<div style={{ fontSize: "20px" }}>{count}</div>
+										<button style={{ border: "1px solid red" }} onClick={handleOnClick}>
+											Click me!
+										</button>
+									</>
+								);
+							};
+
+							export default Dashboard;
+						</script></code></pre>
 					</section>
 					<section>
 						<ul>
@@ -114,6 +144,18 @@
 						</ul>
 					</section>
 					<section>
+						<h3>CDD (Component driven development)</h3>
+						<div style="display: flex; align-items: center; height: 500px;">
+							<div>
+								<img width="450px" src="./img/cdd.png" />
+							</div>
+							<div>
+								<img width="450px" src="https://chromaticblog.ghost.io/content/images/downloaded_images/How-design-systems-use-Storybook/1-2cTGESNUKqHxxzpAdv-z-g-1.gif" />
+							</div>
+						</div>
+						<a href="https://www.componentdriven.org/">https://www.componentdriven.org/</a>
+					</section>
+					<section>
 						<h3>But!</h3>
 						<h3 class="fragment">State management still sucks!</h3>
 					</section>
@@ -150,6 +192,9 @@
 						</script></code></pre>
 					</section>
 					<section>
+						<img src="./img/redux-toolkit.png" />
+					</section>
+					<section>
 						<p>./src/store.js</p>
 						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">
 							import { configureStore } from "@reduxjs/toolkit";
@@ -157,9 +202,9 @@
 							import rootReducer from "./reducer";
 							
 							const store = configureStore({
-							  reducer: {
-								root: rootReducer,
-							  },
+								reducer: {
+									root: rootReducer,
+								},
 							});
 							
 							export default store;							
@@ -276,8 +321,8 @@
 						</ul>
 					</section>
 					<section>
-						<p>So... How can we eliminate the side effects in Redux?</p>
-						<p class="fragment">Yes! Redux Middleware can do this!.</p>
+						<p>So... How can we eliminate the side effects in Redux reducers?</p>
+						<p class="fragment">Redux Middleware can do this!.</p>
 					</section>
 					<section>
 						<h3>One-way Data Flow with Middleware</h3>
@@ -478,6 +523,7 @@
 								<p>Redux-Thunk</p>
 							</div>
 						</div>
+						<p>Side Effects Management</p>
 					</section>
 					<section>
 						<div>
@@ -640,6 +686,37 @@
 						<li><a href="https://redux-saga.js.org/docs/basics/DeclarativeEffects">Redux-Saga: Basic Concepts</a></li>
 						<li><a href="https://redux-toolkit.js.org/tutorials/quick-start">Redux Toolkit: Quick Start</a></li>
 					</ul>
+				</section>
+				<section>
+					<h3>Furthur Readings</h3>
+					<div style="flex-direction: row; display: flex; justify-content: space-evenly;">
+						<div style="display: flex;">
+							<ul>
+								<li>CDD</li>
+								<ul>
+									<li><a href="https://storybook.js.org/">Storybook</a></li>
+									<li><a href="https://reactcosmos.org/">React Cosmos</a></li>
+								</ul>
+								<li>State Management</li>
+								<ul>
+									<li><a href="https://recoiljs.org/">Recoil</a></li>
+									<li><a href="https://mobx.js.org/README.html">MobX</a></li>
+									<li><a href="https://react-query.tanstack.com/">React Query</a></li>
+								</ul>
+							</ul>
+						</div>
+						<div style="display: flex;">
+							<ul>
+								<li>Articles</li>
+								<ul>
+									<li><a href="https://reactpatterns.com/">React Patterns</a></li>
+									<li><a href="https://www.patterns.dev">Patterns.dev</a></li>
+									<li><a href="https://goshacmd.com/redux-side-effect-approaches/">3 common approaches to side effects</a></li>
+									<li><a href="https://blog.logrocket.com/understanding-redux-saga-action-creators-sagas/">Understanding Redux Saga: From action creators to sagas</a></li>
+								</ul>
+							</ul>
+						</div>
+					</div>
 				</section>
 			</div>
 		</div>
