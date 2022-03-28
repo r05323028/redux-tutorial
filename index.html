@@ -7,7 +7,7 @@
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -107,6 +107,8 @@
 					<section>
 						<h3>Container</h3>
 						<pre><code data-line-numbers class="language-jsx" data-trim><script type="text/template">
+							import { BeautifulChart, BeautifulButton } from './components';
+							
 							const Dashboard = (props) => {
 								const [count, setCount] = useState(0);
 
@@ -126,13 +128,27 @@
 					<section>
 						<h3>Component</h3>
 						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">
+							import styled from 'styled-components';
+
+							// CSS in JS
+							const Div = styled.div`
+								font-size: 30px;
+							`
+							
+							const Button = styled.button`
+								border: 1px solid;
+							`
+							
 							const BeautifulChart = ({ count }) => {
-								return <>{ count }</>;
-							}
+								return <Div>{ count }</Div>;
+							};
 
 							const BeautifulButton = ({ onClick }) => {
-								return <button onClick={onClick}>Click</button>;
-							}
+								return <Button onClick={onClick}>Click</Button>;
+							};
+
+							export { BeautifulChart, BeautifulButton };
+							
 						</script></code></pre>
 					</section>
 					<section>
@@ -604,6 +620,82 @@
 						</div>
 					</section>
 					<section>
+						<h3>ES6 Generator</h3>
+						<pre><code class="language-js" data-trim data-line-numbers><script type="text/template">
+							function* oneToTen() {
+								for (i = 1; i<=10; i++) {
+									yield i;
+								};
+							};
+
+							gen = oneToTen();
+							gen.next();
+							gen.next();
+							gen.next();
+							gen = oneToTen();
+							gen.next();
+							gen.next();
+							gen.next();
+						</script></code></pre>
+					</section>
+					<section>
+						<h3>Saga</h3>
+						<p>Generator function yields <em>Effects</em></p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							import { call, put } from 'redux-saga/effects';
+							import Api from '...';
+
+							function* fetchUser(action) {
+								const { userId } = action.payload;
+								const user = call(Api.fetchUser, userId);
+								yield put({ type: "FETCH_USER_SUCCESS", payload: user });
+							};
+						</script></code></pre>	
+					</section>
+					<section>
+						<h3>Declarative Effects</h3>
+						<p>Yield an object and let middleware execute</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							// call(Api.fetchUser, userId)
+							{
+								CALL: {
+									fn: Api.fetchUser,
+									args: [userId],
+								},
+							};
+						</script></code></pre>	
+					</section>
+					<section>
+						<h3>A common saga worker</h3>
+						<div class="mermaid">
+							%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '30px'}}}%%
+							stateDiagram-v2
+								direction LR
+								state if_else <<choice>>
+								A: call()
+								B: CALL
+								C: put()
+								D: PUT
+								E: put()
+								F: PUT
+								M: Saga Middleware
+								M1: Saga Middleware
+								M2: Saga Middleware
+								[*] --> A
+								A --> B
+								B --> M
+								M --> if_else
+								C --> D
+								E --> F
+								if_else --> E: failed
+								if_else --> C: success
+								D --> M1
+								F --> M2
+								M1 --> [*]
+								M2 --> [*]
+						</div>
+					</section>
+					<section>
 						<p>./src/saga.js</p>
 						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
 							import { call, put, takeEvery } from 'redux-saga/effects';
@@ -616,14 +708,14 @@
 									yield put(
 										{
 											type: "USER_FETCH_SUCCEEDED", 
-											user: user
+											payload: user
 										}
 									);
 								} catch (e) {
 									yield put(
 										{
 											type: "USER_FETCH_FAILED", 
-											message: e.message
+											payload: e.message
 										}
 									);
 								};
@@ -713,6 +805,7 @@
 									<li><a href="https://www.patterns.dev">Patterns.dev</a></li>
 									<li><a href="https://goshacmd.com/redux-side-effect-approaches/">3 common approaches to side effects</a></li>
 									<li><a href="https://blog.logrocket.com/understanding-redux-saga-action-creators-sagas/">Understanding Redux Saga: From action creators to sagas</a></li>
+									<li><a href="https://medium.com/%E6%89%8B%E5%AF%AB%E7%AD%86%E8%A8%98/understanding-redux-saga-148d7f070fa">Redux-Saga | 原理解析</a></li>
 								</ul>
 							</ul>
 						</div>
