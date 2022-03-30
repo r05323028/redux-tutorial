@@ -184,11 +184,12 @@
 					<section>
 						<h3>Terminology</h3>
 						<ul>
-							<li class="fragment">Store: store states, dispatch actions</li>
-							<li class="fragment">Reducer: (State, Action) -> State'</li>
-							<li class="fragment">Action: javascript object contains <em><b>type</b></em> key.</li>
-							<li class="fragment">Dispatch: only way to change states</li>
+							<li class="fragment"><b>Store</b>: store states, dispatch actions</li>
+							<li class="fragment"><b>Reducer</b>: (State, Action) -> State'</li>
+							<li class="fragment"><b>Action</b>: javascript object contains <em><b>type</b></em> key.</li>
+							<li class="fragment"><b>Dispatch</b>: only way to change states</li>
 							<li class="fragment">Selector: (State) -> Data</li>
+							<li class="fragment">Action Creator: (Payload) -> Action</li>
 						</ul>
 					</section>
 					<section>
@@ -270,6 +271,38 @@
 						</script></code></pre>
 					</section>
 					<section>
+						<h3>Invisible hand</h3>
+						<p>What Redux Toolkit done for us</p>
+						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">						
+							//action creator
+							const setCount = (payload) => {
+								return {
+									type: 'setCount',
+									payload: payload,
+								};
+							};
+							
+							// reducer
+							const initialState = {
+								count: 0,
+							};
+							
+							const rootReducer = (state = initialState, action) => {
+								switch(action.type) {
+									case 'setCount': {
+										return {
+											...state,
+											count: action.payload,
+										};
+									}
+									default: {
+										return state;
+									}
+								};
+							};
+						</script></code></pre>
+					</section>
+					<section>
 						<p>./src/selector.js</p>
 						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">						
 							export const countSelector = (state) => state.root.count;					
@@ -315,7 +348,7 @@
 							<li class="fragment">✅ No longer to lift state up</li>
 							<li class="fragment">✅ Finally, We have a state management mechanism</li>
 							<li class="fragment">✅ States are trackable</li>
-							<li class="fragment">❌ Eliminate side effect</li>
+							<li class="fragment">✅ Eliminate side effect in UI</li>
 						</ul>
 					</section>
 				</section>
@@ -479,6 +512,10 @@
 								};
 							};
 						</script></code></pre>
+					</section>
+					<section>
+						<h3>Redux <code>applyMiddleware</code> API</h3>
+						<img src="./img/redux-applymiddleware.png" />
 					</section>
 					<section>
 						<h3>Version 7</h3>
