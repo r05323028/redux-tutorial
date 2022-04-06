@@ -182,6 +182,24 @@
 						<h3>Redux to the rescue!</h3>
 					</section>
 					<section>
+						<h3>Redux</h3>
+						<ul>
+							<li class="fragment">State management</li>
+							<li class="fragment">Inspired by Flux (One-way data flow)</li>
+							<li class="fragment">Inspired by elm (Reducers)</li>
+							<li class="fragment">Command Query Responsibility Segregation (CQRS)</li>
+							<li class="fragment">Event Sourcing</li>
+						</ul>
+					</section>
+					<section>
+						<h3>3 Principles</h3>
+						<ul>
+							<li class="fragment">Single source of truth (SSOT)</li>
+							<li class="fragment">State is read-only (Immutable)</li>
+							<li class="fragment">Changes are made with pure functions (Reducers)</li>
+						</ul>
+					</section>
+					<section>
 						<h3>Terminology</h3>
 						<ul>
 							<li class="fragment"><b>Store</b>: store states, dispatch actions</li>
@@ -195,6 +213,32 @@
 					<section>
 						<h3>One-way data flow</h3>
 						<img height="500px" src="https://d33wubrfki0l68.cloudfront.net/01cc198232551a7e180f4e9e327b5ab22d9d14e7/b33f4/assets/images/reduxdataflowdiagram-49fa8c3968371d9ef6f2a1486bd40a26.gif" />
+					</section>
+					<section>
+						<h3>Flux vs MVC</h3>
+						<div style="display: flex;">
+							<div style="display: flex;">
+								<img height="300px" src="./img/flux.png" />
+							</div>
+							<div style="display: flex;">
+								<img height="300px" src="./img/mvc.png" />
+							</div>
+						</div>
+						<p>F8 2014 (Facebook)</p>
+					</section>
+					<section>
+						<h3>CQRS</h3>
+					</section>
+					<section>
+						<h3>Event sourcing</h3>
+						<div class="mermaid">
+							%%{init: {'themeVariables': {'fontSize': '30px'}}}%%
+							graph LR;
+								A[initialState] --action--> B[stateDiff]
+								B --action--> C[stateDiff]
+								C --action--> D[currentState]
+						</div>
+						<img height="300px" src="./img/simple-app-diff.png" />
 					</section>
 				</section>
 				<!-- Slide 4 -->
@@ -804,6 +848,9 @@
 							...
 						</script></code></pre>	
 					</section>
+				</section>
+				<section>
+					<h3>Testing</h3>
 				</section>
 				<section>
 					<h3>References</h3>
