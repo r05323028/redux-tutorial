@@ -253,8 +253,7 @@
 								state: State
 							}
 
-							type ActionCreator<P extends any[] = any[]> = (...args: P) => Action | AsyncAction
-						</script>											
+							type ActionCreator<P extends any[] = any[]> = (...args: P) => Action | AsyncAction									
 						</script></code></pre>
 					</section>
 					<section>
@@ -874,6 +873,27 @@
 					</section>
 					<section>
 						<h3>Dispatch an action!</h3>
+						<div class="mermaid">
+							%%{init: {'themeVariables': {'fontSize': '20px'}}}%%
+							stateDiagram-v2
+								direction LR
+								state if_else <<choice>>
+								A: dispatch(action)
+								B: takeEvery("USER_FETCH_REQUESTED")
+								C: fetchUser
+								D: call(Api.fetchUser)
+								E: put("USER_FETCH_SUCCEEDED")
+								F: put("USER_FETCH_FAILED")
+								[*] --> A
+								A --> B
+								B --> C
+								C --> D
+								D --> if_else
+								if_else --> E: success
+								if_else --> F: failed
+								E --> [*]
+								F --> [*]
+						</div>
 						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
 							...
 							
@@ -892,7 +912,90 @@
 					</section>
 				</section>
 				<section>
-					<h3>Testing</h3>
+					<section>
+						<h3>Testing</h3>
+					</section>
+					<section>
+						<h3>Prerequisites</h3>
+						<pre><code data-line-numbers data-trim class="language-bash"><script type="text/template">
+							npm install -D jest
+						</script></code></pre>	
+					</section>
+					<section>
+						<h3>Slice</h3>
+						<pre><code data-line-numbers data-trim class="language-js"><script type="text/template">
+							import { createSlice } from '@reduxjs/toolkit';
+
+							const initialState = {
+								count: 0
+							}
+
+							const countSlice = createSlice({
+								name: 'count'
+								intialState,
+								reducers: {
+									setCount: (state, action) => {
+										state.count = action.payload;
+									},
+								},
+							});
+
+							export const { setCount } = countSlice.actions;
+
+							export default countSlice.reducer;
+						</script></code></pre>	
+					</section>
+					<section>
+						<h3>Sagas</h3>
+						<pre><code data-line-numbers data-trim class="language-js"><script type="text/template">
+							import { call, put, takeEvery } from 'redux-saga/effects';
+							import api from './api';
+							import { fetchMeSuccess, fetchMeFailed, fetchMeRequested } from './features/me'
+							
+							function* fetchMe(action) {
+								try{
+									const resp = yield call(api, userId);
+									yield put(fetchMeSuccess(resp.data));
+								} catch(e) {
+									yield put(fetchMeFailed(e.message));
+								}
+							};
+
+							function* rootSaga() {
+								yield takeEvery(fetchMeRequested().type, fetchMe)
+							};
+
+							export default rootSaga;
+						</script></code></pre>	
+					</section>
+					<section>
+						<h3>Testing Reducers</h3>
+						<pre><code data-line-numbers data-trim class="language-js"><script type="text/template">
+							import countReducer, { setCount } from './count'
+
+							test('initial state', () => {
+								const expected = {
+									count: 0
+								}
+								const actual = countReducer(undefined, { type: undefined })
+								expect(actual).toStrictEqual(expected)
+							})
+
+							test('set count', () => {
+								const action = setCount(10)
+								const expected = {
+									count: 10
+								}
+								const actual = countReducer(undefined, action)
+								expect(actual).toStrictEqual(expected)
+							})
+						</script></code></pre>	
+					</section>
+					<!-- <section>
+						<h3>Testing Sagas</h3>
+						<pre><code data-line-numbers data-trim class="language-js"><script type="text/template">
+						</script></code></pre>	
+					</section> -->
 				</section>
 				<section>
 					<h3>References</h3>
