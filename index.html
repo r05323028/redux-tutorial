@@ -48,6 +48,7 @@
 					</section>
 					<section>
 						<h3>Side effects</h3>
+						<p>Use effects in UI component directly</p>
 						<pre><code data-line-numbers class="language-jsx" data-trim><script type="text/template">
 							import { useMount } from 'react-use';
 
@@ -192,6 +193,33 @@
 						</ul>
 					</section>
 					<section>
+						<h3>Flux vs MVC</h3>
+						<div style="display: flex;">
+							<div style="display: flex;">
+								<img height="300px" src="./img/flux.png" />
+							</div>
+							<div style="display: flex;">
+								<img height="300px" src="./img/mvc.png" />
+							</div>
+						</div>
+						<p>F8 2014 (Facebook)</p>
+					</section>
+					<section>
+						<h3>CQRS</h3>
+						<img src="./img/redux-tutorial-cqrs.png" />
+					</section>
+					<section>
+						<h3>Event sourcing</h3>
+						<div class="mermaid">
+							%%{init: {'themeVariables': {'fontSize': '30px'}}}%%
+							graph LR;
+								A[initialState] --action--> B[stateDiff]
+								B --action--> C[stateDiff]
+								C --action--> D[currentState]
+						</div>
+						<img height="300px" src="./img/simple-app-diff.png" />
+					</section>
+					<section>
 						<h3>3 Principles</h3>
 						<ul>
 							<li class="fragment">Single source of truth (SSOT)</li>
@@ -211,34 +239,27 @@
 						</ul>
 					</section>
 					<section>
+						<h3>Understanding Redux from <code>types</code></h3>
+						<pre><code data-line-numbers="1|2|3|4|5|6-10|13" data-trim class="language-typescript"><script type="text/template">
+							type State = any // serializable
+							type Action = {type: string} & {[key: string]: any} // 'type' is required
+							type AsyncAction = any // pass into middleware first! async primitives.
+							type Reducer<S, A> = (state: S, action: A) => S // must be pure functions!
+							type Dispatch = (action: Action | AsyncAction) => any
+							type Store = {
+								dispatch: Dispatch
+								getState: () => State
+								reducers: {[key: string]: Reducer}
+								state: State
+							}
+
+							type ActionCreator<P extends any[] = any[]> = (...args: P) => Action | AsyncAction
+						</script>											
+						</script></code></pre>
+					</section>
+					<section>
 						<h3>One-way data flow</h3>
 						<img height="500px" src="https://d33wubrfki0l68.cloudfront.net/01cc198232551a7e180f4e9e327b5ab22d9d14e7/b33f4/assets/images/reduxdataflowdiagram-49fa8c3968371d9ef6f2a1486bd40a26.gif" />
-					</section>
-					<section>
-						<h3>Flux vs MVC</h3>
-						<div style="display: flex;">
-							<div style="display: flex;">
-								<img height="300px" src="./img/flux.png" />
-							</div>
-							<div style="display: flex;">
-								<img height="300px" src="./img/mvc.png" />
-							</div>
-						</div>
-						<p>F8 2014 (Facebook)</p>
-					</section>
-					<section>
-						<h3>CQRS</h3>
-					</section>
-					<section>
-						<h3>Event sourcing</h3>
-						<div class="mermaid">
-							%%{init: {'themeVariables': {'fontSize': '30px'}}}%%
-							graph LR;
-								A[initialState] --action--> B[stateDiff]
-								B --action--> C[stateDiff]
-								C --action--> D[currentState]
-						</div>
-						<img height="300px" src="./img/simple-app-diff.png" />
 					</section>
 				</section>
 				<!-- Slide 4 -->
@@ -256,6 +277,7 @@
 						<img src="./img/redux-toolkit.png" />
 					</section>
 					<section>
+						<h3>Store</h3>
 						<p>./src/store.js</p>
 						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">
 							import { configureStore } from "@reduxjs/toolkit";
@@ -272,6 +294,7 @@
 						</script></code></pre>
 					</section>
 					<section>
+						<h3>App</h3>
 						<p>./src/index.js</p>
 						<pre><code data-line-numbers="4-5,9-11" data-trim class="language-jsx"><script type="text/template">						
 							import React from "react";
@@ -291,7 +314,8 @@
 						</script></code></pre>
 					</section>
 					<section>
-						<p>./src/reducer.js</p>
+						<h3>Slice</h3>
+						<p>./src/features.js</p>
 						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">						
 							import { createSlice } from "@reduxjs/toolkit";
 
@@ -347,12 +371,14 @@
 						</script></code></pre>
 					</section>
 					<section>
+						<h3>Selector</h3>
 						<p>./src/selector.js</p>
 						<pre><code data-line-numbers data-trim class="language-jsx"><script type="text/template">						
 							export const countSelector = (state) => state.root.count;					
 						</script></code></pre>
 					</section>
 					<section>
+						<h3>Container</h3>
 						<p>./src/container/Dashboard.js</p>
 						<pre><code data-line-numbers="2|4-5|11-15" data-trim class="language-jsx"><script type="text/template">						
 							import React from "react";
@@ -415,7 +441,7 @@
 					</section>
 					<section>
 						<p>So... How can we eliminate the side effects in Redux reducers?</p>
-						<p class="fragment">Redux Middleware can do this!.</p>
+						<p class="fragment">Redux Middleware can do this!</p>
 					</section>
 					<section>
 						<h3>One-way Data Flow with Middleware</h3>
@@ -662,7 +688,7 @@
 						</script></code></pre>
 					</section>
 					<section>
-						<h3>How Does the Middleware Work?</h3>
+						<h3>How Does the Thunk Middleware Work?</h3>
 						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
 							const thunkMiddleware =
 								({ dispatch, getState }) =>
