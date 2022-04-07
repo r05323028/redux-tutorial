@@ -874,6 +874,27 @@
 					</section>
 					<section>
 						<h3>Dispatch an action!</h3>
+						<div class="mermaid">
+							%%{init: {'themeVariables': {'fontSize': '20px'}}}%%
+							stateDiagram-v2
+								direction LR
+								state if_else <<choice>>
+								A: dispatch(action)
+								B: takeEvery("USER_FETCH_REQUESTED")
+								C: fetchUser
+								D: call(Api.fetchUser)
+								E: put("USER_FETCH_SUCCEEDED")
+								F: put("USER_FETCH_FAILED")
+								[*] --> A
+								A --> B
+								B --> C
+								C --> D
+								D --> if_else
+								if_else --> E: success
+								if_else --> F: failed
+								E --> [*]
+								F --> [*]
+						</div>
 						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
 							...
 							
