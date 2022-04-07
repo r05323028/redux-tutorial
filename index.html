@@ -952,18 +952,22 @@
 							import api from './api';
 							import { fetchMeSuccess, fetchMeFailed, fetchMeRequested } from './features/me'
 							
-							function* fetchMe(action) {
+							function* fetchMe() {
 								try{
-									const resp = yield call(api, userId);
+									const resp = yield call(api);
 									yield put(fetchMeSuccess(resp.data));
+									return resp.status;
 								} catch(e) {
 									yield put(fetchMeFailed(e.message));
+									return -1;
 								}
 							};
 
 							function* rootSaga() {
 								yield takeEvery(fetchMeRequested().type, fetchMe)
 							};
+
+							export { fetchMe };
 
 							export default rootSaga;
 						</script></code></pre>	
@@ -991,11 +995,90 @@
 							})
 						</script></code></pre>	
 					</section>
-					<!-- <section>
+					<section>
 						<h3>Testing Sagas</h3>
 						<pre><code data-line-numbers data-trim class="language-js"><script type="text/template">
+							import { createServer, Response, Server } from 'miragejs'
+							import { fetchMeSaga } from './saga'
+							import { runSaga, Saga } from 'redux-saga'
+							import { fetchMeFailed, fetchMeSuccess } from './features/me'
+							
+							let server
+							
+							beforeEach(() => {
+								server = createServer({
+									routes() {
+										this.urlPrefix = process.env.REACT_APP_API_HOST
+									},
+								})
+							})
+							
+							afterEach(() => {
+								server.shutdown()
+							})
+							
+							test('Get me success', async () => {
+								server.get(
+									'/me',
+									() => {
+										return { name: 'Sean Chang' }
+									},
+									{ timing: 2000 }
+								)
+							
+								const actual = []
+								const result = await runSaga(
+									{
+										dispatch: (action) =>
+											actual.push(action),
+									},
+									fetchMeSaga
+								).toPromise()
+								const expectedPayload = { name: 'Sean Chang' }
+								const expected = [
+									{
+										type: fetchMeSuccess(expectedPayload).type,
+										payload: expectedPayload,
+									},
+								]
+							
+								expect(result).toEqual(200)
+								expect(actual).toStrictEqual(expected)
+							})
+							
+							test('Get me failed', async () => {
+								server.get(
+									'/me',
+									() => {
+										return new Response(500, {}, {errors: ["Could not fetch user"]})
+									},
+									{ timing: 2000 }
+								)
+								const actual = []
+								const result = await runSaga(
+									{
+										dispatch: (action) =>
+											actual.push(action),
+									},
+									fetchMeSaga
+								).toPromise()
+								const expectedPayload = "Could not fetch name!"
+								const expected = [
+									{
+										type: fetchMeFailed(expectedPayload).type,
+										payload: expectedPayload,
+									},
+								]
+							
+								expect(result).toEqual(-1)
+								expect(actual).toStrictEqual(expected)
+							})							
 						</script></code></pre>	
-					</section> -->
+					</section>
+				</section>
+				<section>
+					<h3>Full Example</h3>
+					<a href="https://github.com/r05323028/react-simple-example">https://github.com/r05323028/react-simple-example</a>
 				</section>
 				<section>
 					<h3>References</h3>
@@ -1006,6 +1089,7 @@
 						<li><a href="https://redux.js.org/usage/writing-logic-thunks">Redux-Thunk: Writing Logic with Thunks</a></li>
 						<li><a href="https://redux-saga.js.org/docs/basics/DeclarativeEffects">Redux-Saga: Basic Concepts</a></li>
 						<li><a href="https://redux-toolkit.js.org/tutorials/quick-start">Redux Toolkit: Quick Start</a></li>
+						<li><a href="https://miragejs.com/docs/testing/application-tests/">Ｍirage.js: Application tests</a></li>
 					</ul>
 				</section>
 				<section>
