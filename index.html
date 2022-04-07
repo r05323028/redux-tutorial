@@ -816,11 +816,13 @@
 						</div>
 					</section>
 					<section>
+						<h3>Sagas</h3>
 						<p>./src/saga.js</p>
 						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
 							import { call, put, takeEvery } from 'redux-saga/effects';
 							import Api from '...';
 
+							// saga worker
 							function* fetchUser(action) {
 								const { userId } = action.payload;
 								try {
@@ -841,6 +843,7 @@
 								};
 							};
 
+							// listener
 							function* mySaga() {
 								yield takeEvery("USER_FETCH_REQUESTED", fetchUser);
 							}
