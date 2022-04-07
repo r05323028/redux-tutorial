@@ -672,6 +672,19 @@
 						</script></code></pre>
 					</section>
 					<section>
+						<h3>Recall the ActionCreator & Dispatch</h3>
+						<pre><code data-line-numbers data-trim class="language-typescript"><script type="text/template">
+							// depends on your middleware
+							type ActionCreator<P extends any[] = any[]> = (...args: P) => Action | AsyncAction
+							type Dispatch = (action: Action | AsyncAction) => any
+
+							// Redux-Thunk
+							type ActionCreator<P extends any[] = any[]> = (...args: P) => Action | Thunk
+							type Thunk = (dispatch: Dispatch, getState: () => State) => any
+							type Dispatch = (action: Action | Thunk) => any
+						</script></code></pre>
+					</section>
+					<section>
 						<h3>Rewrite action creator</h3>
 						<p>How do we call the API?</p>
 						<pre><code data-line-numbers="2-9" data-trim class="language-javascript"><script type="text/template">
