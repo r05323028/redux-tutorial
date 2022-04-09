@@ -383,7 +383,7 @@
 							import React from "react";
 							import { useDispatch, useSelector } from "react-redux";
 							
-							import { setCount } from "../reducer";
+							import { setCount } from "../features";
 							import { countSelector } from "../selector";
 							
 							import BeautifulChart from "../components/BeautifulChart";
@@ -828,7 +828,7 @@
 									const user = yield call(Api.fetchUser, userId);
 									yield put(
 										{
-											type: "USER_FETCH_SUCCEEDED", 
+											type: "USER_FETCH_SUCCESS", 
 											payload: user
 										}
 									);
@@ -882,7 +882,7 @@
 								B: takeEvery("USER_FETCH_REQUESTED")
 								C: fetchUser
 								D: call(Api.fetchUser)
-								E: put("USER_FETCH_SUCCEEDED")
+								E: put("USER_FETCH_SUCCESS")
 								F: put("USER_FETCH_FAILED")
 								[*] --> A
 								A --> B
