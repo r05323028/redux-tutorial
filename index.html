@@ -205,6 +205,50 @@
 						<p>F8 2014 (Facebook)</p>
 					</section>
 					<section>
+						<h3>The elm architecture</h3>
+						<p>MVU: Model-View-Update</p>
+						<pre><code data-line-numbers data-trim class="language-elm"><script type="text/template">								
+							-- Example from official site
+							-- MAIN
+
+							main =
+								Browser.sandbox { init = init, update = update, view = view }							
+							
+							
+							-- MODEL
+
+							type alias Model = Int
+							
+							init : Model
+							init = 
+								0
+							
+							-- UPDATE
+							
+							type Msg = Increment | Decrement
+							
+							update : Msg -> Model -> Model
+							update msg model =
+								case msg of
+									Increment ->
+										model + 1
+								
+									Decrement ->
+										model - 1
+							
+							-- VIEW
+							
+							view : Model -> Html Msg
+							view model =
+							  div []
+								[ button [ onClick Decrement ] [ text "-" ]
+								, div [] [ text (String.fromInt model) ]
+								, button [ onClick Increment ] [ text "+" ]
+								]
+
+						</script></code></pre>
+					</section>
+					<section>
 						<h3>CQRS</h3>
 						<img src="./img/redux-tutorial-cqrs.png" />
 					</section>
