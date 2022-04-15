@@ -670,8 +670,8 @@
 						<div class="mermaid">
 							%%{init: {'themeVariables': {'fontSize': '30px'}}}%%
 							graph LR;
-								A[store.dispatch] --> B[logger]
-								B -->|next| C[errorHandling]
+								A[store.dispatch] --> B[errorHandling]
+								B -->|next| C[logger]
 								C -->|next| D[Reducers]
 						</div>
 					</section>
