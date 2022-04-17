@@ -792,18 +792,20 @@
 							};
 
 							gen = oneToTen();
-							gen.next();
-							gen.next();
-							gen.next();
+							gen.next(); // { value: 1, done: false}
+							gen.next(); // { value: 2, done: false}
+							gen.next(); // { value: 3, done: false}
 							gen = oneToTen();
-							gen.next();
-							gen.next();
-							gen.next();
+							gen.next(); // { value: 1, done: false}
+							gen.next(); // { value: 2, done: false}
+							gen.next(); // { value: 3, done: false}
+							...
+							gen.next(); // { value: undefined, done: true}
 						</script></code></pre>
 					</section>
 					<section>
 						<h3>Saga</h3>
-						<p>Generator function yields <em>Effects</em></p>
+						<p>Generator function yields <em>Effects</em> (Promise-like objects)</p> 
 						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
 							import { call, put } from 'redux-saga/effects';
 							import Api from '...';
@@ -816,7 +818,7 @@
 						</script></code></pre>	
 					</section>
 					<section>
-						<h3>Declarative Effects</h3>
+						<h3>Effects</h3>
 						<p>Yield an object and let middleware execute</p>
 						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
 							// call(Api.fetchUser, userId)
@@ -829,9 +831,30 @@
 						</script></code></pre>	
 					</section>
 					<section>
-						<h3>Two Types of Sagas</h3>
+						<h3>Effect Creators</h3>
+						<p>Factory functions creating <em>Effects</em></p>
 						<ul>
-							<li>Watcher: generator yield <code>take, takeEvery, ...</code>. Register saga worker and listen on specific action type.</li>
+							<li><code>take</code>: Take specific actions from middleware (blocking).</li>
+							<li><code>call</code>: Send an AJAX request to middleware (blocking).</li>
+							<li><code>put</code>: Send a <code>store.dispatch</code> request to middleware (blocking).</li>
+							<li><code>fork</code>: Send a non-blocking call request to middleware.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Blocking & Non-Blocking</h3>
+						<img src="./img/redux-tutorial-blocking.png" />
+					</section>
+					<section>
+						<h3>Saga Helper Functions</h3>
+						<ul>
+							<li><code>takeEvery</code>: a high-level API built using take and fork.</li>
+							<li><code>takeLatest</code>: a high-level API built using take, fork and cancel.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Two Types of Saga Functions</h3>
+						<ul>
+							<li>Watcher: generator yield <code>take, ...</code>. Register saga worker and listen on specific action type.</li>
 							<li>Worker: generator yield <code>call, put, ...</code>.Run jobs defined in worker function.</li>
 						</ul>
 					</section>
