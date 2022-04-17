@@ -810,7 +810,7 @@
 
 							function* fetchUser(action) {
 								const { userId } = action.payload;
-								const user = call(Api.fetchUser, userId);
+								const user =  yield call(Api.fetchUser, userId);
 								yield put({ type: "FETCH_USER_SUCCESS", payload: user });
 							};
 						</script></code></pre>	
