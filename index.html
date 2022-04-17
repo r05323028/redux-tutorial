@@ -852,6 +852,21 @@
 						</ul>
 					</section>
 					<section>
+						<h3>Dive into <code>takeLatest</code></h3>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							const takeLatest = (patternOrChannel, saga, ...args) => fork(function*() {
+								let lastTask
+								while (true) {
+									const action = yield take(patternOrChannel)
+									if (lastTask) {
+										yield cancel(lastTask) // cancel is no-op if the task has already terminated
+									}
+									lastTask = yield fork(saga, ...args.concat(action))
+								}
+							  })
+						</script></code></pre>	
+					</section>
+					<section>
 						<h3>Two Types of Saga Functions</h3>
 						<ul>
 							<li>Watcher: generator yield <code>take, ...</code>. Register saga worker and listen on specific action type.</li>
