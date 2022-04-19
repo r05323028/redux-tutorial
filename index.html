@@ -845,6 +845,36 @@
 						<img src="./img/redux-tutorial-blocking.png" />
 					</section>
 					<section>
+						<h3>Advanced Usage</h3>
+						<p>Task cancellation</p>
+						<pre><code data-line-numbers data-trim class="language-javascript"><script type="text/template">
+							function* slowRequest(action) {
+								const { args } = action.payload
+								try {
+									const { data }  = yield call(slowApi, ...args)
+									yield put({type: "SLOW_REQUEST_SUCCESS", payload: data})
+								} finally {
+									if (yield cancelled()) {
+										yield put({type: "SHOW_REQUEST_CANCELLED"})
+									}
+								}
+							}
+
+							function* watcher() {
+
+								// blocking
+								const action = yield take("RECEIVE_SLOW_REQUEST")
+
+								// non-blocking
+								const task = fork(slowRequest, action)
+
+								//blocking
+								yield take('SLOW_REQUEST_CANCEL')
+								yield cancel(task)
+							}
+						</script></code></pre>
+					</section>
+					<section>
 						<h3>Saga Helper Functions</h3>
 						<ul>
 							<li><code>takeEvery</code>: a high-level API built using take and fork.</li>
